@@ -70,7 +70,6 @@ notebook==6.0.2
 notebook-as-pdf==0.3.1
 numpy==1.21.2
 oauthlib==3.1.0
-opencv-python==4.1.2.30
 openpyxl==3.0.10
 outdated==0.2.1
 packaging==21.3
