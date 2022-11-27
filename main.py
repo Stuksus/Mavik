@@ -96,8 +96,9 @@ def main():
 #         # url_name = st.sidebar.selectbox(label='popular_paths',options=['complete'])
     else:
         st.info(
+                
             f"""
-                👆 Попробуйте загрузить [data.csv](https://github.com/Stuksus/Mavik/blob/main/logo.png)
+                👆 Попробуйте загрузить [data.csv](https://drive.google.com/uc?export=download&id=1alUQ180VKTijKiKtvJmyTAkyqkYp-2eM)
                 """
         )
 
