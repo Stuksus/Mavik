@@ -26,14 +26,14 @@ def main():
         st.write()
         df = backend.get_df(pd.read_csv(file))
         min_age = st.sidebar.slider('age',min_value=18,max_value=98,step=1,value = 18)
-        max_age = st.sidebar.slider('age',min_value=19,max_value=100,step=1,value = 25)
-        has_credit_card = st.sidebar.selectbox(label='Has Credit Card',options=df.hascrcard.unique().tolist()+['All'])
+        max_age = st.sidebar.slider('age',min_value=19,max_value=100,step=1,value = 99)
+        has_credit_card = st.sidebar.selectbox(label='Has Credit Card',options=df.hascrcard.unique().tolist()+['All'],index = ['All'])
         if has_credit_card == 'All':
             has_credit_card = df.hascrcard.unique().tolist()
         else:
             has_credit_card = [has_credit_card]
-        start_country = st.sidebar.multiselect(label='Geography',options=df.geography.unique().tolist(),default=[df.geography.iloc[0]])
-        start_gender = st.sidebar.multiselect(label='Gender',options=df.gender.unique().tolist(),default=[df.gender.iloc[0]])
+        start_country = st.sidebar.multiselect(label='Geography',options=df.geography.unique().tolist(),default=df.geography.unique().tolist())
+        start_gender = st.sidebar.multiselect(label='Gender',options=df.gender.unique().tolist(),default=df.gender.unique().tolist())
 #         start_balance = st.sidebar.multiselect(label='balance_cluster',options=df.balance_cluster.unique().tolist(),default=[df.balance_cluster.iloc[0]])
 #         start_estimated_salary = st.sidebar.multiselect(label='estimated_salary_cluster',options=df.estimated_salary_cluster.unique().tolist(),default=[df.estimated_salary_cluster.iloc[0]])
 #         start_salary_bucket = st.sidebar.multiselect(label='Geography',options=df.Geography.unique().tolist(),default=[df.Geography.iloc[0]])
