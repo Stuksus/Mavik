@@ -27,7 +27,7 @@ def main():
         df = backend.get_df(pd.read_csv(file))
         min_age = st.sidebar.slider('age',min_value=18,max_value=98,step=1,value = 18)
         max_age = st.sidebar.slider('age',min_value=19,max_value=100,step=1,value = 99)
-        has_credit_card = st.sidebar.selectbox(label='Has Credit Card',options=df.hascrcard.unique().tolist()+['All'],index = ['All'])
+        has_credit_card = st.sidebar.selectbox(label='Has Credit Card',options=['All'] + df.hascrcard.unique().tolist())
         if has_credit_card == 'All':
             has_credit_card = df.hascrcard.unique().tolist()
         else:
