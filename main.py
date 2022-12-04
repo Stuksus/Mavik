@@ -3,19 +3,22 @@ import pandas as pd
 import backend
 import matplotlib.pyplot as plt
 import seaborn as sns
+import random
 
 
-
+def _color_red_or_green(val):
+    color = 'red' if val > 10 else 'green'
+    return 'color: %s' % color
 def main():
 #     st.set_page_config(layout="wide")
     # st.config.show.disableWatchdogWarning = True
     
     # '''___________________ SIDEBAR ___________________'''
     st.sidebar.image('logo.png',width = 250)
-    st.sidebar.title('Мониторинг оттока клиентов | МАВИК')
+    st.sidebar.title('Мониторинг оттока клиаентов | МАВИК')
 
     # '''___________________  MAIN  ___________________'''
-    st.title('Мониторинг оттока клиентов | МАВИК')
+    st.title('Мониторинг оттока клиаентов | МАВИК')
     st.write('Привет! Это команда МАВИК. Специально для организации Х мы разработали сервис для мониторига и детектирования оттока клиентов')
     
 
@@ -24,7 +27,9 @@ def main():
     file = st.file_uploader('Загрузите csv файл с данными о клиентах',type=['csv'])
     if file is not None: 
         st.write()
+        
         df = backend.get_df(pd.read_csv(file))
+        sample_size = st.sidebar.slider('sample_size',min_value=0,max_value=1100,step=100,value = 0)
         min_age = st.sidebar.slider('age',min_value=18,max_value=98,step=1,value = 18)
         max_age = st.sidebar.slider('age',min_value=19,max_value=100,step=1,value = 99)
         has_credit_card = st.sidebar.selectbox(label='Has Credit Card',options=['All'] + df.hascrcard.unique().tolist())
@@ -34,19 +39,32 @@ def main():
             has_credit_card = [has_credit_card]
         start_country = st.sidebar.multiselect(label='Geography',options=df.geography.unique().tolist(),default=df.geography.unique().tolist())
         start_gender = st.sidebar.multiselect(label='Gender',options=df.gender.unique().tolist(),default=df.gender.unique().tolist())
-#         start_balance = st.sidebar.multiselect(label='balance_cluster',options=df.balance_cluster.unique().tolist(),default=[df.balance_cluster.iloc[0]])
-#         start_estimated_salary = st.sidebar.multiselect(label='estimated_salary_cluster',options=df.estimated_salary_cluster.unique().tolist(),default=[df.estimated_salary_cluster.iloc[0]])
-#         start_salary_bucket = st.sidebar.multiselect(label='Geography',options=df.Geography.unique().tolist(),default=[df.Geography.iloc[0]])
-#         start_product = st.sidebar.multiselect(label='Geography',options=df.Geography.unique().tolist(),default=[df.Geography.iloc[0]])
-#         start_product = st.sidebar.multiselect(label='Geography',options=df.Geography.unique().tolist(),default=[df.Geography.iloc[0]])
-        # day_time = st.sidebar.selectbox(label='day_time',options=df.day_time.unique())     
-        # day_of_week = st.sidebar.selectbox(label='day_of_week',options=df.day_of_week.unique())
-
+        all_criteria = {
+            'age_range_' + str(min_age) + '_' + str(max_age) : '@min_age <= age <= @max_age',
+            'credit_card_' + str(has_credit_card) : 'hascrcard in @has_credit_card',
+            'start_country_' + str(start_country):  'geography in @start_country',
+            'start_gender_' + str(start_gender):  'gender in @start_gender',
+        }
+        control_frame = pd.DataFrame(columns = ['criteria','target_rate','threshold'])
+        num = 0
+        for name,crit in all_criteria.items():
+            crit_seed = name.encode('ascii')
+            seed = sum([x for x in crit_seed])
+            random.seed(seed)
+            thr_by_seed = random.randint(10,25)
+            part = df.query(crit)
+            target_ratio = part.query('exited == 1').shape[0]/part.shape[0] 
+            control_frame = pd.concat([control_frame,pd.DataFrame(data = [[name,target_ratio * 100,thr_by_seed]],columns = ['criteria','target_rate','threshold'])])
+        control_frame = control_frame.set_index('criteria')
+        st.write(control_frame)
         df_ = df.copy()
         # df_ = df_[df_.process_flag_num == process_flag_num]
-        df_ = df_[(df_.geography.isin(start_country)) & (df_.gender.isin(start_gender))& (df_.hascrcard.isin(has_credit_card))& (df_.age > min_age)& (df_.age < max_age)]
-        
-#                 df_ = df_[(df_.geography.isin(start_country)) & (df_.gender.isin(start_gender))& (df_.hascrcard.isin(has_credit_card))& (df_.age > min_age)& (df_.age < max_age) & (df_.balance_cluster.isin(start_balance)) & (df_.estimated_salary_cluster.isin(start_estimated_salary))]
+        if sample_size == 0:
+            df_ = df_[(df_.geography.isin(start_country)) & (df_.gender.isin(start_gender))& (df_.hascrcard.isin(has_credit_card))& (df_.age > min_age)& (df_.age < max_age)]
+        else:
+            df_ = df_[(df_.geography.isin(start_country)) & (df_.gender.isin(start_gender))& (df_.hascrcard.isin(has_credit_card))& (df_.age > min_age)& (df_.age < max_age)].sample(sample_size,random_state = 42)
+            
+            
         if df_.shape[0] == 0:
             st.info('По текущим фильтрам ничего не найдено, сбросьте/измените фильтры или загрузите другой датасет')
         else:
@@ -63,37 +81,6 @@ def main():
             except:
                 st.info('Что то пошло не так, попробуйте другие оси')
         
-#         metrics_by_user = backend.get_metrics_by_user(df_)
-#         sankey_fig = backend.super_function(metrics_by_user, max_users)
-
-#         st.plotly_chart(sankey_fig, use_container_width=True)
-
-#         url_name = df.url_start.unique()[0:]
-#         # st.sidebar.selectbox(label='url_name',options=df.url_start.unique())
-#         # popular_paths = backend.find_popular_paths(backend.data_prep(df),url_name)
-#         # st.write(popular_paths)
-
-#         sank = backend.draw_sankey_popular(df,url_name)
-#         st.write('Топовые пути')
-
-#         st.plotly_chart(sank, use_container_width=True)
-
-
-#         st.write('Метрики по страницам')
-
-#         metrics_by_user = metrics_by_user.dropna(axis=1)
-#         st.write(metrics_by_user.rename(columns={'diff_mean':'среднее время нахождения',
-#                                                  'diff_max':'максимальное время нахождения',
-#                                                  'diff_min':'минимальное время нахождения',
-#                                                  'diff_sum':'суммарное время нахождения',
-#                                                  'diff_std':'среднеее отклонение времени нахождения',
-#                                                  'qty_rel_all':'сумма переходов',
-#                                                  'is_reload':'процент перезагрузок',
-#                                                  'process_order_mean':'средний шаг',
-#                                                  'process_flag_num_max':'максимальный шаг перехода',
-#                                                  'process_flag_num_min':'минимальный шаг перехода'}))
-
-#         # url_name = st.sidebar.selectbox(label='popular_paths',options=['complete'])
     else:
         st.info(
                 
