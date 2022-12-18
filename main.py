@@ -59,7 +59,7 @@ def main():
         control_frame = control_frame.set_index('criteria')
         st.write(control_frame)
         
-        st.dataframe(control_frame.style.apply(lambda x: ("background-color: green","background-color: green") if x['target_rate']>x['threshold'] else "background-color: red",axis = 1))
+        st.dataframe(control_frame.style.apply(lambda x: ("background-color: green","background-color: green") if x['target_rate']<x['threshold'] else "background-color: red",axis = 1))
         df_ = df.copy()
         # df_ = df_[df_.process_flag_num == process_flag_num]
         if sample_size == 0:
