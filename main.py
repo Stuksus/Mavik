@@ -57,6 +57,24 @@ def main():
             control_frame = pd.concat([control_frame,pd.DataFrame(data = [[name,target_ratio * 100,thr_by_seed]],columns = ['criteria','target_rate','threshold'])])
         control_frame = control_frame.set_index('criteria')
         st.write(control_frame)
+                df = pd.DataFrame({
+            "name":         ["alan","beth","charlie","david", "edward"],
+            "age" :         [34,    12,     43,      32,      77],
+            "num_children": [1,     0,      2,       1,       6],
+            "num_pets":     [1,     0,      1,       2,       0],
+            "bank_balance": [100.0, 10.0,   -10.0,   30.0,    30.0]})
+
+        def even_number_background(cell_value):
+
+            highlight = 'background-color: darkorange;'
+            default = ''
+
+            if type(cell_value) in [float, int]:
+                if cell_value % 2 == 0:
+                    return highlight
+            return default
+
+        st.dataframe(df.style.applymap(even_number_background))
         df_ = df.copy()
         # df_ = df_[df_.process_flag_num == process_flag_num]
         if sample_size == 0:
