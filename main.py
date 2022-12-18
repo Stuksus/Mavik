@@ -57,7 +57,6 @@ def main():
             target_ratio = part.query('exited == 1').shape[0]/part.shape[0] 
             control_frame = pd.concat([control_frame,pd.DataFrame(data = [[name,target_ratio * 100,thr_by_seed]],columns = ['criteria','target_rate','threshold'])])
         control_frame = control_frame.set_index('criteria')
-        st.write(control_frame)
         
         st.dataframe(control_frame.style.apply(lambda x: ("background-color: green","background-color: green") if x['target_rate']<x['threshold'] else "background-color: red",axis = 1))
         df_ = df.copy()
