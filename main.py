@@ -57,7 +57,7 @@ def main():
             control_frame = pd.concat([control_frame,pd.DataFrame(data = [[name,target_ratio * 100,thr_by_seed]],columns = ['criteria','target_rate','threshold'])])
         control_frame = control_frame.set_index('criteria')
         st.write(control_frame)
-                df = pd.DataFrame({
+        df = pd.DataFrame({
             "name":         ["alan","beth","charlie","david", "edward"],
             "age" :         [34,    12,     43,      32,      77],
             "num_children": [1,     0,      2,       1,       6],
