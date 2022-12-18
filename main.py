@@ -78,7 +78,7 @@ def main():
             try:
                 fig,ax = plt.subplots()
                 for_plot = df_[[axisX,axisY]].sort_values(by =axisY)
-                plt.scatter(for_plot[axisX],for_plot[axisY])
+                plt.plot(for_plot[axisX],for_plot[axisY],kind = 'hist')
                 st.pyplot(fig)
             except:
                 st.info('Что то пошло не так, попробуйте другие оси')
