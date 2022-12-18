@@ -77,8 +77,8 @@ def main():
             axisY = st.selectbox(label='Выберите поле для оси Y',options=df.columns)
             try:
                 fig,ax = plt.subplots()
-                for_plot = df_[[axisX,axisY]].sort_values(by =axisY)
-                sns.barplot(for_plot[axisX],for_plot[axisY])
+                for_plot = df_[[axisX,axisY]].sort_values(by =axisX)
+                sns.barplot(data = for_plot,x = axisX,y=axisY)
                 st.pyplot(fig)
             except:
                 st.info('Что то пошло не так, попробуйте другие оси')
