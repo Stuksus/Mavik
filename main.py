@@ -7,6 +7,7 @@ import random
 
 
 def _color_red_or_green(val):
+    print(val)
     color = 'red' if val > 10 else 'green'
     return 'color: %s' % color
 def main():
