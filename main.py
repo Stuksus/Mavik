@@ -58,8 +58,8 @@ def main():
             control_frame = pd.concat([control_frame,pd.DataFrame(data = [[name,target_ratio * 100,thr_by_seed]],columns = ['criteria','target_rate','threshold'])])
         control_frame = control_frame.set_index('criteria')
         st.write(control_frame)
-
-        st.dataframe(control_frame.style.applymap(_color_red_or_green))
+        
+        st.dataframe(control_frame.style.apply(lambda x: ("background-color: green","background-color: green") if x['target_rate']>x['threshold'] else "background-color: red",axis = 1,subset = ['target_rate','thresh_hold']))
         df_ = df.copy()
         # df_ = df_[df_.process_flag_num == process_flag_num]
         if sample_size == 0:
